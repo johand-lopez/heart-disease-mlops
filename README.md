@@ -58,7 +58,7 @@ Para probar la API directamente desde el entorno local:
 1. Activar el entorno virtual:
    ```bash
    conda activate ml_venv
-````
+```
 
 2. Ejecutar el servidor FastAPI:
 
@@ -230,3 +230,5 @@ Miniproyecto: *Machine Learning / MLOps Local*
 Durante el desarrollo de este proyecto aprendimos a implementar las etapas esenciales del ciclo de vida de un modelo de Machine Learning bajo prácticas de **MLOps local**, desde el preprocesamiento de datos y el entrenamiento, hasta el despliegue y monitoreo.
 
 Además, logramos integrar herramientas de orquestación (**Kubernetes**), contenerización (**Docker**) y pruebas automatizadas (**CI/CD**) para asegurar **reproducibilidad, calidad y estabilidad del modelo**.
+
+---
