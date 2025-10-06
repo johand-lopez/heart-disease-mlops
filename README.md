@@ -1,3 +1,9 @@
+<h2 align="center">🚀 Demostración del Proyecto</h2>
+
+<p align="center">
+  <img src="assets/demo.gif" width="600" alt="Vista previa de la API">
+</p>
+
 # Proyecto Final MLOps Local — Predicción de Enfermedades Cardíacas
 
 Este proyecto fue desarrollado como parte del curso de **Machine Learning / MLOps** de la **Universidad del Norte**.  
