@@ -222,8 +222,8 @@ heart-disease-mlops/
 * **Miguel Lugo**
 * **Héctor San Juan**
 
-📚 Universidad del Norte — Programa de Ciencia de Datos
-🧪 Miniproyecto: *Machine Learning / MLOps Local*
+Universidad del Norte — Programa de Ciencia de Datos
+Miniproyecto: *Machine Learning / MLOps Local*
 
 ---
 
