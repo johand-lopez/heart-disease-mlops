@@ -1,59 +1,78 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import List
-from pathlib import Path
-import pandas as pd
-import numpy as np
 import joblib
+import pandas as pd
 import json
 
-ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = ROOT / "model.joblib"
-COLUMNS_PATH = ROOT / "training_columns.json"
+# ===============================================================
+# Cargar modelo y columnas de entrenamiento
+# ===============================================================
 
-model = joblib.load(MODEL_PATH)
-with open(COLUMNS_PATH, "r") as f:
-    TRAIN_COLUMNS: List[str] = json.load(f)
+with open("training_columns.json") as f:
+    training_columns = json.load(f)
 
-CATEGORICAL_COLS = ["Sex", "ChestPainType", "RestingECG", "ExerciseAngina", "ST_Slope"]
+model = joblib.load("model.joblib")
 
-class Input(BaseModel):
-    Age: int
-    Sex: str                 
-    ChestPainType: str
-    RestingBP: int
-    Cholesterol: int
-    FastingBS: int          
-    RestingECG: str     
-    MaxHR: int
-    ExerciseAngina: str     
-    Oldpeak: float
-    ST_Slope: str          
+app = FastAPI(
+    title="Heart Disease Prediction API",
+    description="API para predecir enfermedades cardíacas utilizando un modelo de Machine Learning",
+    version="1.0"
+)
 
-app = FastAPI(title="Heart Disease API", version="1.0")
 
-def preprocess_input(payload: dict) -> pd.DataFrame:
-    """Replica el preprocesamiento del entrenamiento:
-       - convierte a DataFrame,
-       - one-hot de categóricas con drop_first,
-       - reindexa al orden exacto TRAIN_COLUMNS.
-    """
-    df_raw = pd.DataFrame([payload])
-    df_enc = pd.get_dummies(df_raw, columns=CATEGORICAL_COLS, drop_first=True)
-    df_enc = df_enc.reindex(columns=TRAIN_COLUMNS, fill_value=0)
-    return df_enc
+# ===============================================================
+# Definición del esquema de entrada
+# ===============================================================
+
+class HeartData(BaseModel):
+    age: int
+    sex: int
+    cp: int
+    trestbps: int
+    chol: int
+    fbs: int
+    restecg: int
+    thalach: int
+    exang: int
+    oldpeak: float
+    slope: int
+    ca: int
+    thal: int
+
+
+# ===============================================================
+# Funciones auxiliares
+# ===============================================================
+
+def preprocess_input(data: dict) -> pd.DataFrame:
+    """Convierte los datos del usuario en un DataFrame compatible con el modelo."""
+    df = pd.DataFrame([data])
+    for col in training_columns:
+        if col not in df.columns:
+            df[col] = 0
+    return df[training_columns]
+
+
+# ===============================================================
+# Endpoints principales
+# ===============================================================
 
 @app.get("/")
-def root():
-    return {"message": "OK - use /docs para probar el endpoint /predict"}
+def read_root():
+    return {"message": "Bienvenido a la API de Predicción de Enfermedades Cardíacas"}
+
 
 @app.get("/health")
-def health():
-    return {"status": "healthy"}
+def health_check():
+    return {"status": "OK"}
+
 
 @app.post("/predict")
-def predict(data: Input):
-    X = preprocess_input(data.dict())
-    proba = float(model.predict_proba(X)[0][1])
-    pred = int(proba > 0.5)
-    return {"heart_disease_probability": round(proba, 4), "prediction": pred}
+def predict(data: HeartData):
+    X = preprocess_input(data.model_dump())
+    prediction = model.predict(X)[0]
+    probability = model.predict_proba(X)[0][1]
+    return {
+        "prediction": int(prediction),
+        "probability": float(probability)
+    }
