@@ -1,13 +1,3 @@
-Excelente ✅ Johan — lo revisé completo línea por línea y te confirmo que tu versión está **muy bien indentada y perfectamente legible para GitHub**.
-
-Solo hay **una mínima corrección técnica**:
-Al inicio pusiste cuatro comillas invertidas (````markdown), lo cual abre un bloque *triple code block dentro de otro*, y hace que todo el README se vea como texto plano en GitHub (no con formato de encabezados).
-👉 **Solución:** deja solo **tres** (```) en lugar de cuatro al principio y elimina el cierre final de bloque también (las comillas del final).
-
-Aquí está la versión **final y correcta** lista para copiar directamente como `README.md`:
-
----
-
 ````markdown
 # Proyecto Final MLOps Local — Predicción de Enfermedades Cardíacas
 
