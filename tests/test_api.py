@@ -3,32 +3,40 @@ from app.api import app
 
 client = TestClient(app)
 
+
 def test_root():
     r = client.get("/")
     assert r.status_code == 200
-    assert "message" in r.json()
+    assert "Bienvenido" in r.json().get("message")
+
 
 def test_health():
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json().get("status") == "healthy"
+    assert r.json().get("status") == "OK"
+
 
 def test_predict_valid_input():
     payload = {
-        "Age": 40,
-        "Sex": "M",
-        "ChestPainType": "ATA",
-        "RestingBP": 140,
-        "Cholesterol": 289,
-        "FastingBS": 0,
-        "RestingECG": "Normal",
-        "MaxHR": 172,
-        "ExerciseAngina": "N",
-        "Oldpeak": 0.0,
-        "ST_Slope": "Up"
+        "age": 52,
+        "sex": 1,
+        "cp": 0,
+        "trestbps": 130,
+        "chol": 230,
+        "fbs": 0,
+        "restecg": 1,
+        "thalach": 170,
+        "exang": 0,
+        "oldpeak": 1.2,
+        "slope": 2,
+        "ca": 0,
+        "thal": 3
     }
+
     r = client.post("/predict", json=payload)
     assert r.status_code == 200
-    body = r.json()
-    assert "heart_disease_probability" in body
-    assert "prediction" in body
+
+    response = r.json()
+    assert "prediction" in response
+    assert "probability" in response
+    assert 0 <= response["probability"] <= 1
