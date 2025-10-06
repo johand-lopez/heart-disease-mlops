@@ -1,4 +1,3 @@
-````markdown
 # Proyecto Final MLOps Local — Predicción de Enfermedades Cardíacas
 
 Este proyecto fue desarrollado como parte del curso de **Machine Learning / MLOps** de la **Universidad del Norte**.  
