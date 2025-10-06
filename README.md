@@ -50,7 +50,6 @@ El flujo completo abarca las siguientes etapas:
 | Monitoreo | Evidently |
 | Integración continua | GitHub Actions |
 
----
 
 ## **Ejecución local (FastAPI sin Docker)**
 
