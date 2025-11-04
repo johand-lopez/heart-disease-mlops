@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 MODEL_PATH = BASE_DIR / "model.joblib"
 COLS_PATH = BASE_DIR / "training_columns.json"
 
@@ -14,19 +13,19 @@ try:
     with open(COLS_PATH) as f:
         training_columns = json.load(f)
 except FileNotFoundError:
-    print(f"ERROR: No se encuentra '{COLS_PATH}'. Ejecuta el notebook primero.")
+    print(f"ERROR: No se encuentra '{COLS_PATH}'. Ejecuta el notebook.")
     training_columns = []
 
 try:
     model = joblib.load(MODEL_PATH)
 except FileNotFoundError:
-    print(f"ERROR: No se encuentra '{MODEL_PATH}'. Ejecuta el notebook primero.")
+    print(f"ERROR: No se encuentra '{MODEL_PATH}'. Ejecuta el notebook.")
     model = None
 
 
 app = FastAPI(
     title="Heart Disease Prediction API",
-    description="API para predecir enfermedades cardíacas utilizando un modelo de Machine Learning",
+    description="API para predecir enfermedades cardíacas",
     version="1.0"
 )
 
@@ -34,18 +33,37 @@ app = FastAPI(
 class HeartData(BaseModel):
     Age: int = Field(..., example=54, description="Edad del paciente")
     Sex: str = Field(..., example="M", description="Sexo del paciente (M o F)")
-    ChestPainType: str = Field(..., example="ATA", description="Tipo de dolor de pecho (ej. ATA, NAP, ASY, TA)")
-    RestingBP: int = Field(..., example=140, description="Presión arterial en reposo")
-    Cholesterol: int = Field(..., example=289, description="Colesterol sérico")
-    FastingBS: int = Field(..., example=0, description="Azúcar en sangre en ayunas (1 > 120 mg/dl, 0 en otro caso)")
-    RestingECG: str = Field(..., example="Normal", description="Resultados ECG en reposo (ej. Normal, ST, LVH)")
-    MaxHR: int = Field(..., example=172, description="Frecuencia cardíaca máxima alcanzada")
-    ExerciseAngina: str = Field(..., example="N", description="Angina inducida por ejercicio (Y o N)")
-    Oldpeak: float = Field(..., example=1.0, description="Depresión del ST inducida por el ejercicio")
-    ST_Slope: str = Field(..., example="Up", description="Pendiente del segmento ST (ej. Up, Flat, Down)")
+    ChestPainType: str = Field(
+        ..., example="ATA",
+        description="Tipo de dolor de pecho (ej. ATA, NAP, ASY, TA)"
+    )
+    RestingBP: int = Field(..., example=140,
+                           description="Presión arterial en reposo")
+    Cholesterol: int = Field(..., example=289,
+                             description="Colesterol sérico")
+    FastingBS: int = Field(
+        ..., example=0,
+        description="Azúcar en sangre en ayunas (1 > 120 mg/dl, 0 otro caso)"
+    )
+    RestingECG: str = Field(
+        ..., example="Normal",
+        description="Resultados ECG en reposo (ej. Normal, ST, LVH)"
+    )
+    MaxHR: int = Field(..., example=172,
+                       description="Frecuencia cardíaca máxima alcanzada")
+    ExerciseAngina: str = Field(
+        ..., example="N",
+        description="Angina inducida por ejercicio (Y o N)"
+    )
+    Oldpeak: float = Field(..., example=1.0,
+                           description="Depresión del ST inducida por ejercicio")
+    ST_Slope: str = Field(
+        ..., example="Up",
+        description="Pendiente del segmento ST (ej. Up, Flat, Down)"
+    )
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "Age": 40,
                 "Sex": "M",
@@ -84,7 +102,7 @@ def health_check():
 
 @app.post("/predict")
 def predict(data: HeartData):
-    
+
     if not model or not training_columns:
         return {"error": "Modelo no cargado. Revisa el estado de /health"}
 
@@ -92,7 +110,7 @@ def predict(data: HeartData):
         X = preprocess_input(data.model_dump(), training_columns)
     except Exception as e:
         return {"error": f"Error durante el preprocesamiento: {str(e)}"}
-    
+
     try:
         prediction = model.predict(X)[0]
     except Exception as e:
@@ -101,9 +119,10 @@ def predict(data: HeartData):
     if hasattr(model, "predict_proba"):
         probability = model.predict_proba(X)[0][1]
     else:
-        probability = float(prediction) 
+        probability = float(prediction)
 
     return {
         "prediction": int(prediction),
         "probability": float(probability)
     }
+    
