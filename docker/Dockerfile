@@ -5,11 +5,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Instalar dependencias
 COPY docker/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar código y artefactos del modelo
 COPY app ./app
 COPY model.joblib ./model.joblib
 COPY training_columns.json ./training_columns.json
