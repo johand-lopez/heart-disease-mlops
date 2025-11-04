@@ -1,4 +1,3 @@
-``markdown
 <h2 align="center">🚀 Demostración del Proyecto</h2>
 
 <p align="center">
