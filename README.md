@@ -64,7 +64,7 @@ Para probar la API directamente desde el entorno local:
 1. Activar el entorno virtual:
    ```bash
    conda activate ml_venv
-````
+
 
 2.  Ejecutar el servidor FastAPI:
 
